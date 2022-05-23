@@ -17,12 +17,13 @@ func main() {
 	}
 	// ast.Print(fset, f)
 	for _, decl := range f.Decls {
-		fmt.Printf("%#v\n", decl)
+		// fmt.Printf("%#v\n", decl)
 		switch decl.(type) {
 		case *ast.GenDecl:
-			fmt.Printf("  %#v\n", decl)
+			// fmt.Printf("  %#v\n", decl)
 		case *ast.FuncDecl:
-			fmt.Printf("  %#v\n", decl)
+			// fmt.Printf("  %#v\n", decl)
+			fmt.Printf("func: %s\n", decl.(*ast.FuncDecl).Name)
 		default:
 		}
 	}

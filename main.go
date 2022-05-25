@@ -13,14 +13,16 @@ func main() {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, "./testdata/a.go", nil, 0)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("parse.ParseFile failed: %s\n", err)
 	}
 	// ast.Print(fset, f)
 	for _, decl := range f.Decls {
 		// fmt.Printf("%#v\n", decl)
 		switch decl.(type) {
+		case *ast.BadDecl:
+			log.Fatalf("Bad Declaration: %#v\n", decl.(*ast.BadDecl))
 		case *ast.GenDecl:
-			// fmt.Printf("  %#v\n", decl)
+			// GenDecl has no referencing variable
 		case *ast.FuncDecl:
 			// fmt.Printf("  %#v\n", decl)
 			fmt.Printf("func: %s\n", decl.(*ast.FuncDecl).Name)

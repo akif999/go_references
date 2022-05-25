@@ -24,6 +24,9 @@ func main() {
 		case *ast.FuncDecl:
 			// fmt.Printf("  %#v\n", decl)
 			fmt.Printf("func: %s\n", decl.(*ast.FuncDecl).Name)
+			for _, stmt := range decl.(*ast.FuncDecl).Body.List {
+				fmt.Printf("  stmt: %#v\n", stmt)
+			}
 		default:
 		}
 	}

@@ -14,7 +14,7 @@ func func1() {
 
 func main() {
 	var mainLVar1 int = 1
-	mainLVar2 := 2
+	mainLVar2 := mainLVar1
 	fmt.Println(mainLVar1)
 	fmt.Println(mainLVar2)
 }

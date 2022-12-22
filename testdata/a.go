@@ -8,6 +8,9 @@ func func1() string {
 	var func1LVar1 string = "1"
 	func1Lvar2 := "2"
 
+	func1Slice1 := make(string, 3)
+	func1Slice1[0] = "hoge"
+
 	_ = func1LVar1
 	_ = func1Lvar2
 

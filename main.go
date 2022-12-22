@@ -84,6 +84,7 @@ func parseBlockStmt(block *ast.BlockStmt) (variableReferences, error) {
 		case *ast.SelectStmt:
 		case *ast.SendStmt:
 		case *ast.EmptyStmt:
+			// EmptyStmt has no referencing variable
 		}
 	}
 	return result, nil
@@ -102,6 +103,7 @@ func parseAssignStmt(stmt *ast.AssignStmt) (variableReference, error) {
 		case *ast.Ident:
 			parseIdent(h.(*ast.Ident))
 		case *ast.BasicLit:
+			// BasicLit is not variable
 		default:
 			// return variableReference{}, fmt.Errorf("Invalid Expr")
 		}

@@ -5,14 +5,6 @@ import (
 	"go/ast"
 )
 
-func parseBlockStmt(block *ast.BlockStmt) (variableReferences, error) {
-	var result variableReferences
-	for _, stmt := range block.List {
-		parseStatement(stmt)
-	}
-	return result, nil
-}
-
 func parseStatement(stmt ast.Stmt) (variableReferences, error) {
 	switch stmt.(type) {
 	case *ast.BlockStmt:
@@ -43,6 +35,14 @@ func parseStatement(stmt ast.Stmt) (variableReferences, error) {
 	}
 
 	return variableReferences{}, nil
+}
+
+func parseBlockStmt(block *ast.BlockStmt) (variableReferences, error) {
+	var result variableReferences
+	for _, stmt := range block.List {
+		parseStatement(stmt)
+	}
+	return result, nil
 }
 
 func parseAssignStmt(stmt *ast.AssignStmt) (variableReferences, error) {

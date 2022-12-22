@@ -20,11 +20,13 @@ func (r *variableReferences) parseFile(file *ast.File) error {
 	// Doc has no variable refernces
 	// Package has no variable refernces
 	// Name has no variable refernces
+	fmt.Printf("Package: %s\n", file.Name)
 	// Decls has variable refernces
 	parseDecls(file.Decls)
 	// Scope has no variable refernces
 	// Imports has no variable refernces
 	// Unresolved has no variable refernces
+	// TODO: is it necessary??
 	// Comments has no variable refernces
 
 	return nil
@@ -40,6 +42,7 @@ func parseDecls(decls []ast.Decl) (variableReferences, error) {
 			// ast.FuncDecl has variable references
 			parseFuncDecl(decl.(*ast.FuncDecl))
 		default:
+			return variableReferences{}, fmt.Errorf("invalid ast element: %+v", decl)
 		}
 	}
 
@@ -85,19 +88,22 @@ func parseBlockStmt(block *ast.BlockStmt) (variableReferences, error) {
 		case *ast.SendStmt:
 		case *ast.EmptyStmt:
 			// EmptyStmt has no referencing variable
+		default:
+			return variableReferences{}, fmt.Errorf("invalid ast element: %+v", stmt)
 		}
 	}
 	return result, nil
 }
 
 func parseAssignStmt(stmt *ast.AssignStmt) (variableReference, error) {
-	fmt.Printf("Lhs: %#v\n", stmt.Lhs)
-	fmt.Printf("TokPos: %#v\n", stmt.TokPos)
-	fmt.Printf("Tok: %#v\n", stmt.Tok)
-	fmt.Printf("Rhs: %#v\n", stmt.Rhs)
+	// fmt.Printf("Lhs: %#v\n", stmt.Lhs)
+	// fmt.Printf("TokPos: %#v\n", stmt.TokPos)
+	// fmt.Printf("Tok: %#v\n", stmt.Tok)
+	// fmt.Printf("Rhs: %#v\n", stmt.Rhs)
 
 	hs := append(stmt.Lhs, stmt.Rhs...)
 
+	// TODO: following proccess has to be parsing Expression function
 	for _, h := range hs {
 		switch h.(type) {
 		case *ast.Ident:
@@ -105,10 +111,17 @@ func parseAssignStmt(stmt *ast.AssignStmt) (variableReference, error) {
 		case *ast.BasicLit:
 			// BasicLit is not variable
 		default:
-			// return variableReference{}, fmt.Errorf("Invalid Expr")
+			return variableReference{}, fmt.Errorf("invalid ast element: %+v", stmt)
 		}
 	}
 	return variableReference{}, nil
+}
+
+func parseReturnStmt(stmt *ast.ReturnStmt) (variableReference, error) {
+	return variableReference{}, nil
+}
+
+func parseExpression(expr *ast.Expr) {
 }
 
 func parseIdent(ident *ast.Ident) {

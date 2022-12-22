@@ -11,17 +11,26 @@ func parseStatement(stmt ast.Stmt) (variableReferences, error) {
 		// Notice: Since an error occurs in the package processing that acquires Go's AST, there is no error here actually.
 		return variableReferences{}, fmt.Errorf("input files has bad declaration at line %d", getLine(fset, stmt.(*ast.BadStmt).From))
 	case *ast.DeclStmt:
-		// DeclStmt has no referencing variable
+		_, _ = parseDecl(stmt.(*ast.DeclStmt).Decl)
 	case *ast.EmptyStmt:
+		// EmptyStmt has no referencing variable
 	case *ast.LabeledStmt:
+		parseStatement(stmt.(*ast.LabeledStmt).Stmt)
 	case *ast.ExprStmt:
+		parseExpression(stmt.(*ast.ExprStmt).X)
 	case *ast.SendStmt:
+		parseExpression(stmt.(*ast.SendStmt).Chan)
+		parseExpression(stmt.(*ast.SendStmt).Value)
 	case *ast.IncDecStmt:
+		parseExpression(stmt.(*ast.IncDecStmt).X)
 	case *ast.AssignStmt:
-		parseAssignStmt(stmt.(*ast.AssignStmt))
+		_, _ = parseAssignStmt(stmt.(*ast.AssignStmt))
 	case *ast.GoStmt:
 	case *ast.DeferStmt:
 	case *ast.ReturnStmt:
+		for _, e := range stmt.(*ast.ReturnStmt).Results {
+			_, _ = parseExpression(e)
+		}
 	case *ast.BranchStmt:
 	case *ast.BlockStmt:
 		// BlockStmt needs to recurse (BlockStmt)

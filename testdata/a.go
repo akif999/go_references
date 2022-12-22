@@ -23,5 +23,5 @@ func main() {
 	fmt.Println(mainLVar1)
 	fmt.Println(mainLVar2)
 
-	return mainVar2
+	return mainLVar2
 }

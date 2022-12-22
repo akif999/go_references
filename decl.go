@@ -5,21 +5,19 @@ import (
 	"go/ast"
 )
 
-func parseDecls(decls []ast.Decl) (variableReferences, error) {
+func parseDecl(decl ast.Decl) (variableReferences, error) {
 	var result variableReferences
-	for _, decl := range decls {
-		switch decl.(type) {
-		case *ast.BadDecl:
-			// Notice: Since an error occurs in the package processing that acquires Go's AST, there is no error here actually.
-			return variableReferences{}, fmt.Errorf("input files has bad declaration at line %d", getLine(fset, decl.(*ast.BadDecl).From))
-		case *ast.GenDecl:
-		// ast.GenDecl has no variable references
-		case *ast.FuncDecl:
-			// ast.FuncDecl has variable references
-			parseFuncDecl(decl.(*ast.FuncDecl))
-		default:
-			return variableReferences{}, fmt.Errorf("invalid ast element: %+v", decl)
-		}
+	switch decl.(type) {
+	case *ast.BadDecl:
+		// Notice: Since an error occurs in the package processing that acquires Go's AST, there is no error here actually.
+		return variableReferences{}, fmt.Errorf("input files has bad declaration at line %d", getLine(fset, decl.(*ast.BadDecl).From))
+	case *ast.GenDecl:
+	// ast.GenDecl has no variable references
+	case *ast.FuncDecl:
+		// ast.FuncDecl has variable references
+		parseFuncDecl(decl.(*ast.FuncDecl))
+	default:
+		return variableReferences{}, fmt.Errorf("invalid ast element: %+v", decl)
 	}
 
 	return result, nil

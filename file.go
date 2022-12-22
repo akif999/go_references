@@ -11,7 +11,9 @@ func (r *variableReferences) parseFile(file *ast.File) error {
 	// Name has no variable refernces
 	fmt.Printf("Package: %s\n", file.Name)
 	// Decls has variable refernces
-	parseDecls(file.Decls)
+	for _, d := range file.Decls {
+		parseDecl(d)
+	}
 	// Scope has no variable refernces
 	// Imports has no variable refernces
 	// Unresolved has no variable refernces

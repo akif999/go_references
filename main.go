@@ -125,6 +125,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("parse.ParseFile failed: %s\n", err)
 	}
-	result := variableReferences{}
-	result.parseFile(f)
+	references := variableReferences{}
+	references.parseFile(f)
 }

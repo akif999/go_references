@@ -123,7 +123,7 @@ var fset *token.FileSet = token.NewFileSet()
 func main() {
 	f, err := parser.ParseFile(fset, "./testdata/a.go", nil, 0)
 	if err != nil {
-		log.Fatalf("parse.ParseFile failed: %s\n", err)
+		log.Fatalf("parser.ParseFile failed: %s\n", err)
 	}
 	references := variableReferences{}
 	references.parseFile(f)

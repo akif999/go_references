@@ -14,6 +14,7 @@ A library to get variable references from Go source code.
 
 * Implementing parse processing
     * exclude Keywords (e.g int, string, make...)
+        * builtins (int, string, panic...)
 * add tests (to `testdata/a.go`)
 * Explore APIs
 

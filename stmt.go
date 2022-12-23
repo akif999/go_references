@@ -15,60 +15,72 @@ func parseStatement(stmt ast.Stmt) (variableReferences, error) {
 	case *ast.EmptyStmt:
 		// EmptyStmt has no referencing variable
 	case *ast.LabeledStmt:
-		parseStatement(stmt.(*ast.LabeledStmt).Stmt)
+		_, _ = parseStatement(stmt.(*ast.LabeledStmt).Stmt)
 	case *ast.ExprStmt:
-		parseExpression(stmt.(*ast.ExprStmt).X)
+		_, _ = parseExpression(stmt.(*ast.ExprStmt).X)
 	case *ast.SendStmt:
-		parseExpression(stmt.(*ast.SendStmt).Chan)
-		parseExpression(stmt.(*ast.SendStmt).Value)
+		_, _ = parseExpression(stmt.(*ast.SendStmt).Chan)
+		_, _ = parseExpression(stmt.(*ast.SendStmt).Value)
 	case *ast.IncDecStmt:
-		parseExpression(stmt.(*ast.IncDecStmt).X)
+		_, _ = parseExpression(stmt.(*ast.IncDecStmt).X)
 	case *ast.AssignStmt:
-		_, _ = parseAssignStmt(stmt.(*ast.AssignStmt))
+		for _, e := range stmt.(*ast.AssignStmt).Lhs {
+			_, _ = parseExpression(e)
+		}
+		for _, e := range stmt.(*ast.AssignStmt).Rhs {
+			_, _ = parseExpression(e)
+		}
 	case *ast.GoStmt:
+		_, _ = parseExpression(stmt.(*ast.GoStmt).Call)
 	case *ast.DeferStmt:
+		_, _ = parseExpression(stmt.(*ast.DeferStmt).Call)
 	case *ast.ReturnStmt:
 		for _, e := range stmt.(*ast.ReturnStmt).Results {
 			_, _ = parseExpression(e)
 		}
 	case *ast.BranchStmt:
+		// TODO: Label is variable??
+		parseIdent(stmt.(*ast.BranchStmt).Label)
 	case *ast.BlockStmt:
-		// BlockStmt needs to recurse (BlockStmt)
-		parseBlockStmt(stmt.(*ast.BlockStmt))
+		for _, s := range stmt.(*ast.BlockStmt).List {
+			parseStatement(s)
+		}
 	case *ast.IfStmt:
+		_, _ = parseStatement(stmt.(*ast.IfStmt).Init)
+		_, _ = parseStatement(stmt.(*ast.IfStmt).Body)
+		_, _ = parseStatement(stmt.(*ast.IfStmt).Else)
 	case *ast.CaseClause:
+		for _, e := range stmt.(*ast.CaseClause).List {
+			_, _ = parseExpression(e)
+		}
+		for _, s := range stmt.(*ast.CaseClause).Body {
+			_, _ = parseStatement(s)
+		}
 	case *ast.SwitchStmt:
+		_, _ = parseStatement(stmt.(*ast.SwitchStmt).Init)
+		_, _ = parseStatement(stmt.(*ast.SwitchStmt).Body)
 	case *ast.TypeSwitchStmt:
+		_, _ = parseStatement(stmt.(*ast.TypeSwitchStmt).Init)
+		_, _ = parseStatement(stmt.(*ast.TypeSwitchStmt).Assign)
+		_, _ = parseStatement(stmt.(*ast.TypeSwitchStmt).Body)
 	case *ast.CommClause:
+		_, _ = parseStatement(stmt.(*ast.CommClause).Comm)
+		for _, s := range stmt.(*ast.CommClause).Body {
+			_, _ = parseStatement(s)
+		}
 	case *ast.SelectStmt:
+		_, _ = parseStatement(stmt.(*ast.SelectStmt).Body)
 	case *ast.ForStmt:
+		_, _ = parseStatement(stmt.(*ast.ForStmt).Init)
+		_, _ = parseStatement(stmt.(*ast.ForStmt).Post)
+		_, _ = parseStatement(stmt.(*ast.ForStmt).Body)
 	case *ast.RangeStmt:
-		// EmptyStmt has no referencing variable
+		_, _ = parseExpression(stmt.(*ast.RangeStmt).Key)
+		_, _ = parseExpression(stmt.(*ast.RangeStmt).Value)
+		_, _ = parseStatement(stmt.(*ast.RangeStmt).Body)
 	default:
 		return variableReferences{}, fmt.Errorf("invalid ast element: %+v", stmt)
 	}
 
-	return variableReferences{}, nil
-}
-
-func parseBlockStmt(block *ast.BlockStmt) (variableReferences, error) {
-	var result variableReferences
-	for _, stmt := range block.List {
-		parseStatement(stmt)
-	}
-	return result, nil
-}
-
-func parseAssignStmt(stmt *ast.AssignStmt) (variableReferences, error) {
-	// fmt.Printf("Lhs: %#v\n", stmt.Lhs)
-	// fmt.Printf("TokPos: %#v\n", stmt.TokPos)
-	// fmt.Printf("Tok: %#v\n", stmt.Tok)
-	// fmt.Printf("Rhs: %#v\n", stmt.Rhs)
-
-	hs := append(stmt.Lhs, stmt.Rhs...)
-
-	for _, h := range hs {
-		_, _ = parseExpression(h)
-	}
 	return variableReferences{}, nil
 }

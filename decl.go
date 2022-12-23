@@ -30,7 +30,7 @@ func parseFuncDecl(decl *ast.FuncDecl) (variableReferences, error) {
 	// Name has no variable refernces
 	// Type has no variable refernces
 	// Body has variable refernces
-	parseBlockStmt(decl.Body)
+	parseStatement(decl.Body)
 
 	return result, nil
 }

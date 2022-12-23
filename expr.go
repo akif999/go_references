@@ -68,7 +68,9 @@ func parseExpression(expr ast.Expr) (variableReference, error) {
 }
 
 func parseIdent(ident *ast.Ident) {
-	fmt.Printf("  %s: %d\n", ident.Name, getLine(fset, ident.NamePos))
+	if !isBuiltin(ident.Name) {
+		fmt.Printf("  %s: %d\n", ident.Name, getLine(fset, ident.NamePos))
+	}
 }
 
 func getLine(fSet *token.FileSet, pos token.Pos) int {

@@ -15,7 +15,7 @@ func parseExpression(expr ast.Expr) (variableReference, error) {
 	case *ast.Ident:
 		parseIdent(expr.(*ast.Ident))
 	case *ast.Ellipsis:
-		parseExpression(expr.(*ast.Ellipsis).Elt)
+		_, _ = parseExpression(expr.(*ast.Ellipsis).Elt)
 	case *ast.BasicLit:
 		// BasicLit is not variable
 	case *ast.FuncLit:
@@ -25,41 +25,41 @@ func parseExpression(expr ast.Expr) (variableReference, error) {
 			_, _ = parseExpression(e)
 		}
 	case *ast.ParenExpr:
-		parseExpression(expr.(*ast.ParenExpr).X)
+		_, _ = parseExpression(expr.(*ast.ParenExpr).X)
 	case *ast.SelectorExpr:
-		parseExpression(expr.(*ast.SelectorExpr).X)
+		_, _ = parseExpression(expr.(*ast.SelectorExpr).X)
 		parseIdent(expr.(*ast.SelectorExpr).Sel)
 	case *ast.IndexExpr:
-		parseExpression(expr.(*ast.IndexExpr).X)
-		parseExpression(expr.(*ast.IndexExpr).Index)
+		_, _ = parseExpression(expr.(*ast.IndexExpr).X)
+		_, _ = parseExpression(expr.(*ast.IndexExpr).Index)
 	case *ast.IndexListExpr:
-		parseExpression(expr.(*ast.IndexListExpr).X)
+		_, _ = parseExpression(expr.(*ast.IndexListExpr).X)
 		for _, e := range expr.(*ast.IndexListExpr).Indices {
 			_, _ = parseExpression(e)
 		}
 	case *ast.SliceExpr:
-		parseExpression(expr.(*ast.SliceExpr).X)
-		parseExpression(expr.(*ast.SliceExpr).Low)
-		parseExpression(expr.(*ast.SliceExpr).High)
-		parseExpression(expr.(*ast.SliceExpr).Max)
+		_, _ = parseExpression(expr.(*ast.SliceExpr).X)
+		_, _ = parseExpression(expr.(*ast.SliceExpr).Low)
+		_, _ = parseExpression(expr.(*ast.SliceExpr).High)
+		_, _ = parseExpression(expr.(*ast.SliceExpr).Max)
 	case *ast.TypeAssertExpr:
-		parseExpression(expr.(*ast.TypeAssertExpr).X)
-		parseExpression(expr.(*ast.TypeAssertExpr).Type)
+		_, _ = parseExpression(expr.(*ast.TypeAssertExpr).X)
+		_, _ = parseExpression(expr.(*ast.TypeAssertExpr).Type)
 	case *ast.CallExpr:
-		parseExpression(expr.(*ast.CallExpr).Fun)
+		_, _ = parseExpression(expr.(*ast.CallExpr).Fun)
 		for _, e := range expr.(*ast.CallExpr).Args {
 			_, _ = parseExpression(e)
 		}
 	case *ast.StarExpr:
-		parseExpression(expr.(*ast.StarExpr).X)
+		_, _ = parseExpression(expr.(*ast.StarExpr).X)
 	case *ast.UnaryExpr:
-		parseExpression(expr.(*ast.UnaryExpr).X)
+		_, _ = parseExpression(expr.(*ast.UnaryExpr).X)
 	case *ast.BinaryExpr:
-		parseExpression(expr.(*ast.BinaryExpr).X)
-		parseExpression(expr.(*ast.BinaryExpr).Y)
+		_, _ = parseExpression(expr.(*ast.BinaryExpr).X)
+		_, _ = parseExpression(expr.(*ast.BinaryExpr).Y)
 	case *ast.KeyValueExpr:
-		parseExpression(expr.(*ast.KeyValueExpr).Key)
-		parseExpression(expr.(*ast.KeyValueExpr).Value)
+		_, _ = parseExpression(expr.(*ast.KeyValueExpr).Key)
+		_, _ = parseExpression(expr.(*ast.KeyValueExpr).Value)
 	default:
 		return variableReference{}, fmt.Errorf("invalid ast element: %+v", expr)
 	}

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	references "go_githu.com/akif999/go_references"
+	references "github.com/akif999/go_references"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-package main
+package references
 
 var builtins map[string]struct{} = map[string]struct{}{
 

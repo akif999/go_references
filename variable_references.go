@@ -11,7 +11,7 @@ type variableReferences []variableReference
 type variableReference struct {
 	varName string
 	row     int
-	col     int
+	// col     int
 }
 
 var fset *token.FileSet = token.NewFileSet()

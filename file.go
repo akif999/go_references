@@ -1,15 +1,35 @@
 package main
 
 import (
-	"fmt"
-	"go/ast"
+	"go/parser"
+	"go/token"
 )
 
-func (r *variableReferences) parseFile(file *ast.File) error {
+var fset *token.FileSet = token.NewFileSet()
+
+type variableReferences struct {
+	fileName string
+	Refs     []variableReference
+}
+
+type variableReference struct {
+	varName string
+	row     int
+	// col     int
+}
+
+func New() *variableReferences {
+	return &variableReferences{}
+}
+
+func (r *variableReferences) parseFile(filePath string) error {
+	file, err := parser.ParseFile(fset, filePath, nil, 0)
+	if err != nil {
+		return err
+	}
 	// Doc has no variable refernces
 	// Package has no variable refernces
 	// Name has no variable refernces
-	fmt.Printf("Package: %s\n", file.Name)
 	// Decls has variable refernces
 	for _, d := range file.Decls {
 		parseDecl(d)

@@ -6,70 +6,71 @@ import (
 	"go/token"
 )
 
-func parseExpression(expr ast.Expr) (variableReference, error) {
+func (v *VariableReferences) parseExpression(expr ast.Expr) error {
 	// TODO* is necessary checking nil ??
 	switch expr.(type) {
 	case *ast.BadExpr:
 		// Notice: Since an error occurs in the package processing that acquires Go's AST, there is no error here actually.
-		return variableReference{}, fmt.Errorf("input files has bad expression at line %d", getLine(fset, expr.(*ast.BadExpr).From))
+		return fmt.Errorf("input files has bad expression at line %d", getLine(fset, expr.(*ast.BadExpr).From))
 	case *ast.Ident:
-		parseIdent(expr.(*ast.Ident))
+		v.parseIdent(expr.(*ast.Ident))
 	case *ast.Ellipsis:
-		_, _ = parseExpression(expr.(*ast.Ellipsis).Elt)
+		v.parseExpression(expr.(*ast.Ellipsis).Elt)
 	case *ast.BasicLit:
 		// BasicLit is not variable
 	case *ast.FuncLit:
-		_, _ = parseStatement(expr.(*ast.FuncLit).Body)
+		v.parseStatement(expr.(*ast.FuncLit).Body)
 	case *ast.CompositeLit:
 		for _, e := range expr.(*ast.CompositeLit).Elts {
-			_, _ = parseExpression(e)
+			v.parseExpression(e)
 		}
 	case *ast.ParenExpr:
-		_, _ = parseExpression(expr.(*ast.ParenExpr).X)
+		v.parseExpression(expr.(*ast.ParenExpr).X)
 	case *ast.SelectorExpr:
-		_, _ = parseExpression(expr.(*ast.SelectorExpr).X)
-		parseIdent(expr.(*ast.SelectorExpr).Sel)
+		v.parseExpression(expr.(*ast.SelectorExpr).X)
+		v.parseIdent(expr.(*ast.SelectorExpr).Sel)
 	case *ast.IndexExpr:
-		_, _ = parseExpression(expr.(*ast.IndexExpr).X)
-		_, _ = parseExpression(expr.(*ast.IndexExpr).Index)
+		v.parseExpression(expr.(*ast.IndexExpr).X)
+		v.parseExpression(expr.(*ast.IndexExpr).Index)
 	case *ast.IndexListExpr:
-		_, _ = parseExpression(expr.(*ast.IndexListExpr).X)
+		v.parseExpression(expr.(*ast.IndexListExpr).X)
 		for _, e := range expr.(*ast.IndexListExpr).Indices {
-			_, _ = parseExpression(e)
+			v.parseExpression(e)
 		}
 	case *ast.SliceExpr:
-		_, _ = parseExpression(expr.(*ast.SliceExpr).X)
-		_, _ = parseExpression(expr.(*ast.SliceExpr).Low)
-		_, _ = parseExpression(expr.(*ast.SliceExpr).High)
-		_, _ = parseExpression(expr.(*ast.SliceExpr).Max)
+		v.parseExpression(expr.(*ast.SliceExpr).X)
+		v.parseExpression(expr.(*ast.SliceExpr).Low)
+		v.parseExpression(expr.(*ast.SliceExpr).High)
+		v.parseExpression(expr.(*ast.SliceExpr).Max)
 	case *ast.TypeAssertExpr:
-		_, _ = parseExpression(expr.(*ast.TypeAssertExpr).X)
-		_, _ = parseExpression(expr.(*ast.TypeAssertExpr).Type)
+		v.parseExpression(expr.(*ast.TypeAssertExpr).X)
+		v.parseExpression(expr.(*ast.TypeAssertExpr).Type)
 	case *ast.CallExpr:
-		_, _ = parseExpression(expr.(*ast.CallExpr).Fun)
+		v.parseExpression(expr.(*ast.CallExpr).Fun)
 		for _, e := range expr.(*ast.CallExpr).Args {
-			_, _ = parseExpression(e)
+			v.parseExpression(e)
 		}
 	case *ast.StarExpr:
-		_, _ = parseExpression(expr.(*ast.StarExpr).X)
+		v.parseExpression(expr.(*ast.StarExpr).X)
 	case *ast.UnaryExpr:
-		_, _ = parseExpression(expr.(*ast.UnaryExpr).X)
+		v.parseExpression(expr.(*ast.UnaryExpr).X)
 	case *ast.BinaryExpr:
-		_, _ = parseExpression(expr.(*ast.BinaryExpr).X)
-		_, _ = parseExpression(expr.(*ast.BinaryExpr).Y)
+		v.parseExpression(expr.(*ast.BinaryExpr).X)
+		v.parseExpression(expr.(*ast.BinaryExpr).Y)
 	case *ast.KeyValueExpr:
-		_, _ = parseExpression(expr.(*ast.KeyValueExpr).Key)
-		_, _ = parseExpression(expr.(*ast.KeyValueExpr).Value)
+		v.parseExpression(expr.(*ast.KeyValueExpr).Key)
+		v.parseExpression(expr.(*ast.KeyValueExpr).Value)
 	default:
-		return variableReference{}, fmt.Errorf("invalid ast element: %+v", expr)
+		return fmt.Errorf("invalid ast element: %+v", expr)
 	}
 
-	return variableReference{}, nil
+	return nil
 }
 
-func parseIdent(ident *ast.Ident) {
+func (v *VariableReferences) parseIdent(ident *ast.Ident) {
 	if !isBuiltin(ident.Name) {
-		fmt.Printf("  %s: %d\n", ident.Name, getLine(fset, ident.NamePos))
+		// fmt.Printf("  %s: %d\n", ident.Name, getLine(fset, ident.NamePos))
+		v.Refs = append(v.Refs, VariableReference{Name: ident.Name, Row: getLine(fset, ident.NamePos)})
 	}
 }
 

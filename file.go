@@ -7,22 +7,22 @@ import (
 
 var fset *token.FileSet = token.NewFileSet()
 
-type variableReferences struct {
-	fileName string
-	Refs     []variableReference
+type VariableReferences struct {
+	File string
+	Refs []VariableReference
 }
 
-type variableReference struct {
-	varName string
-	row     int
+type VariableReference struct {
+	Name string
+	Row  int
 	// col     int
 }
 
-func New() *variableReferences {
-	return &variableReferences{}
+func New() *VariableReferences {
+	return &VariableReferences{}
 }
 
-func (r *variableReferences) parseFile(filePath string) error {
+func (v *VariableReferences) ParseFile(filePath string) error {
 	file, err := parser.ParseFile(fset, filePath, nil, 0)
 	if err != nil {
 		return err
@@ -32,7 +32,7 @@ func (r *variableReferences) parseFile(filePath string) error {
 	// Name has no variable refernces
 	// Decls has variable refernces
 	for _, d := range file.Decls {
-		parseDecl(d)
+		v.parseDecl(d)
 	}
 	// Scope has no variable refernces
 	// Imports has no variable refernces

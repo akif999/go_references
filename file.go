@@ -23,6 +23,7 @@ func New() *VariableReferences {
 }
 
 func (v *VariableReferences) ParseFile(filePath string) error {
+	v.File = filePath
 	file, err := parser.ParseFile(fset, filePath, nil, 0)
 	if err != nil {
 		return err

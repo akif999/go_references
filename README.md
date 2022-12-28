@@ -43,6 +43,8 @@ func main() {
 * Explore APIs (DONE)
 * Add Context(under consideration)
     * ex. AssignStmt, StarExpr..
+* Add identifier map(under consideration)
+    * e.g Hoge {{Line:11, Context: Assign}...}
 * add tests (to `testdata/a.go`)
 
 ## Author

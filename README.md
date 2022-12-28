@@ -47,6 +47,10 @@ func main() {
     * e.g Hoge {{Line:11, Context: Assign}...}
 * add tests (to `testdata/a.go`)
 
+## License
+
+MIT
+
 ## Author
 
 Akifumi Kitabatake(user name is "akif" or "akif999")
